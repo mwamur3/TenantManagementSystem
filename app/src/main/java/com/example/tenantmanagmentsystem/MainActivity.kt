@@ -1,82 +1,136 @@
+
 package com.example.tenantmanagmentsystem
-import android.util.Log
+
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.tenantmanagmentsystem.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
-    // Stores the most recently saved tenant
-    private var lastTenant: Tenant? = null
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("TENANT_LIFECYCLE", "MainActivity: onCreate")
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
 
-        // SAVE TENANT
-        binding.saveButton.setOnClickListener {
+        setSupportActionBar(binding.toolbar)
 
-            val name = binding.tenantNameEditText.text.toString()
-            val phone = binding.phoneEditText.text.toString()
-            val rent = binding.rentEditText.text.toString()
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 
-            if (name.isEmpty()) {
-                binding.tenantNameEditText.error =
-                    "Please enter tenant name"
-                return@setOnClickListener
+        val navController = navHostFragment.navController
+
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.dashboardFragment,
+                R.id.addTenantFragment,
+                R.id.viewTenantsFragment
+            ),
+            binding.drawerLayout
+        )
+
+        setupActionBarWithNavController(
+            navController,
+            appBarConfiguration
+        )
+
+        val headerView = binding.navigationView.getHeaderView(0)
+        val emailTextView =
+            headerView.findViewById<TextView>(R.id.headerEmail)
+
+        emailTextView.text =
+            intent.getStringExtra("EMAIL") ?: "Tenant Administrator"
+
+        binding.navigationView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.drawerLogout -> {
+                    binding.drawerLayout.closeDrawers()
+                    logout()
+                    true
+                }
+
+                R.id.dashboardFragment,
+                R.id.addTenantFragment,
+                R.id.viewTenantsFragment -> {
+                    val destinationId = item.itemId
+
+                    if (navController.currentDestination?.id != destinationId) {
+                        navController.navigate(destinationId)
+                    }
+
+                    binding.drawerLayout.closeDrawers()
+                    true
+                }
+
+                else -> false
             }
-
-            // Create a Tenant object
-            val tenant = Tenant(name, phone, rent)
-
-            // Display the tenant using Data Binding
-            binding.tenant = tenant
-
-            // Remember the last saved tenant
-            lastTenant = tenant
-
-            binding.tenantStatusTextView.text =
-                "Tenant saved successfully"
-
-            // Clear the input fields
-            binding.tenantNameEditText.text.clear()
-            binding.phoneEditText.text.clear()
-            binding.rentEditText.text.clear()
-        }
-
-        // CALL TENANT
-        binding.callButton.setOnClickListener {
-
-            val tenant = lastTenant
-
-            if (tenant == null) {
-                Toast.makeText(
-                    this,
-                    "Save a tenant first",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                return@setOnClickListener
-            }
-
-            // Open the phone dialer with the tenant's number
-            val intent = Intent(
-                Intent.ACTION_DIAL,
-                Uri.parse("tel:${tenant.phone}")
-            )
-
-            startActivity(intent)
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menu.add(Menu.NONE, 1, Menu.NONE, "View Tenants")
+        menu.add(Menu.NONE, 2, Menu.NONE, "Logout")
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            1 -> {
+                val navHostFragment = supportFragmentManager
+                    .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
+                val navController = navHostFragment.navController
+
+                if (navController.currentDestination?.id != R.id.viewTenantsFragment) {
+                    navController.navigate(R.id.viewTenantsFragment)
+                }
+                true
+            }
+
+            2 -> {
+                logout()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun logout() {
+        Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+
+        val intent = Intent(this, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        startActivity(intent)
+        finish()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
+        return navHostFragment.navController.navigateUp(
+            appBarConfiguration
+        ) || super.onSupportNavigateUp()
+    }
+
     override fun onStart() {
         super.onStart()
         Log.d("TENANT_LIFECYCLE", "MainActivity: onStart")

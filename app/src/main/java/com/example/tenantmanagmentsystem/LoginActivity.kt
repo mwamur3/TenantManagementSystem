@@ -1,3 +1,4 @@
+
 package com.example.tenantmanagmentsystem
 
 import android.content.Intent
@@ -17,52 +18,41 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Receive email from RegisterActivity
         val registeredEmail = intent.getStringExtra("EMAIL")
 
         if (registeredEmail != null) {
             binding.emailEditText.setText(registeredEmail)
         }
 
-        // LOGIN button
         binding.loginButton.setOnClickListener {
-
             val email = binding.emailEditText.text.toString().trim()
             val password = binding.passwordEditText.text.toString()
 
             if (email.isEmpty() || password.isEmpty()) {
-
                 Toast.makeText(
                     this,
                     "Please enter your email and password",
                     Toast.LENGTH_SHORT
                 ).show()
-
             } else {
-
-                // Explicit Intent to MainActivity
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+                val mainIntent = Intent(this, MainActivity::class.java)
+                mainIntent.putExtra("EMAIL", email)
+                startActivity(mainIntent)
                 finish()
             }
         }
 
-        // Register link
         binding.registerTextView.setOnClickListener {
-
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            val registerIntent = Intent(this, RegisterActivity::class.java)
+            startActivity(registerIntent)
         }
 
-        // Help website
         binding.helpTextView.setOnClickListener {
-
-            val intent = Intent(
+            val helpIntent = Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("https://www.strathmore.edu")
             )
-
-            startActivity(intent)
+            startActivity(helpIntent)
         }
     }
 }
