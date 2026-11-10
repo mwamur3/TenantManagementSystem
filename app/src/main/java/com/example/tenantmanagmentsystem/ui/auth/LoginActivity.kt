@@ -1,5 +1,5 @@
 
-package com.example.tenantmanagmentsystem
+package com.example.tenantmanagmentsystem.ui.auth
 
 import android.content.Intent
 import android.net.Uri
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tenantmanagmentsystem.databinding.ActivityLoginBinding
+import com.example.tenantmanagmentsystem.ui.main.MainActivity
 
 class LoginActivity : AppCompatActivity() {
 

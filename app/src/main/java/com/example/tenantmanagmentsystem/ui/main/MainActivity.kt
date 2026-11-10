@@ -1,5 +1,5 @@
 
-package com.example.tenantmanagmentsystem
+package com.example.tenantmanagmentsystem.ui.main
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +13,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.tenantmanagmentsystem.R
 import com.example.tenantmanagmentsystem.databinding.ActivityMainBinding
+import com.example.tenantmanagmentsystem.ui.auth.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,8 +31,8 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 
         val navController = navHostFragment.navController
 
@@ -57,6 +59,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
+
                 R.id.drawerLogout -> {
                     binding.drawerLayout.closeDrawers()
                     logout()
@@ -66,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.dashboardFragment,
                 R.id.addTenantFragment,
                 R.id.viewTenantsFragment -> {
+
                     val destinationId = item.itemId
 
                     if (navController.currentDestination?.id != destinationId) {
@@ -89,15 +93,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+
             1 -> {
-                val navHostFragment = supportFragmentManager
-                    .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                val navHostFragment =
+                    supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 
                 val navController = navHostFragment.navController
 
                 if (navController.currentDestination?.id != R.id.viewTenantsFragment) {
                     navController.navigate(R.id.viewTenantsFragment)
                 }
+
                 true
             }
 
@@ -123,8 +129,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 
         return navHostFragment.navController.navigateUp(
             appBarConfiguration

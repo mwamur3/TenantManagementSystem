@@ -1,4 +1,5 @@
-package com.example.tenantmanagmentsystem
+
+package com.example.tenantmanagmentsystem.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -32,7 +33,6 @@ class RegisterActivity : AppCompatActivity() {
                 email.isEmpty() ||
                 password.isEmpty()
             ) {
-
                 Toast.makeText(
                     this,
                     "Please fill in all fields",

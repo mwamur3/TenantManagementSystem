@@ -1,5 +1,5 @@
 
-package com.example.tenantmanagmentsystem
+package com.example.tenantmanagmentsystem.ui.tenants
 
 import android.content.Intent
 import android.net.Uri
@@ -11,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.tenantmanagmentsystem.data.model.Tenant
+import com.example.tenantmanagmentsystem.data.repository.TenantRepository
 import com.example.tenantmanagmentsystem.databinding.FragmentAddTenantBinding
 
 class AddTenantFragment : Fragment() {
@@ -33,6 +35,7 @@ class AddTenantFragment : Fragment() {
         Log.d("TENANT_LIFECYCLE", "AddTenantFragment: onViewCreated")
 
         binding.saveButton.setOnClickListener {
+
             val name = binding.tenantNameEditText.text.toString().trim()
             val phone = binding.phoneEditText.text.toString().trim()
             val rentText = binding.rentEditText.text.toString().trim()
@@ -43,13 +46,14 @@ class AddTenantFragment : Fragment() {
             }
 
             val rent = rentText.toDoubleOrNull()
+
             if (rent == null || rent <= 0) {
                 Toast.makeText(requireContext(), "Enter a valid rent amount", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val tenant = Tenant(name = name, phone = phone, rent = rentText)
-            TenantRepository.tenants.add(tenant)
+            TenantRepository.addTenant(tenant)
 
             Toast.makeText(requireContext(), "Tenant saved successfully", Toast.LENGTH_SHORT).show()
 
@@ -58,10 +62,10 @@ class AddTenantFragment : Fragment() {
                     .actionAddTenantFragmentToViewTenantsFragment(tenant)
 
             findNavController().navigate(action)
-
         }
 
         binding.callButton.setOnClickListener {
+
             val phone = binding.phoneEditText.text.toString().trim()
 
             if (phone.isEmpty()) {
