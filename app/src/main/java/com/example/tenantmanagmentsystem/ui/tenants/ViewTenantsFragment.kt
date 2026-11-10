@@ -9,9 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
-import com.example.tenantmanagmentsystem.data.repository.TenantRepository
 import com.example.tenantmanagmentsystem.databinding.FragmentViewTenantsBinding
+import com.example.tenantmanagmentsystem.ui.viewmodel.TenantViewModel
 
 class ViewTenantsFragment : Fragment() {
 
@@ -19,6 +20,7 @@ class ViewTenantsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val args: ViewTenantsFragmentArgs by navArgs()
+    private val tenantViewModel: TenantViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,14 +62,14 @@ class ViewTenantsFragment : Fragment() {
             binding.newTenantGroup.visibility = View.GONE
         }
 
-        val tenants = TenantRepository.tenants
-
-        binding.allTenantsTextView.text =
-            if (tenants.isEmpty()) {
-                "No tenants yet. Add one from the Dashboard."
-            } else {
-                tenants.joinToString("\n\n") { it.summary() }
-            }
+        tenantViewModel.tenants.observe(viewLifecycleOwner) { tenants ->
+            binding.allTenantsTextView.text =
+                if (tenants.isEmpty()) {
+                    "No tenants yet. Add one from the Dashboard."
+                } else {
+                    tenants.joinToString("\n\n") { it.summary() }
+                }
+        }
     }
 
     override fun onDestroyView() {
