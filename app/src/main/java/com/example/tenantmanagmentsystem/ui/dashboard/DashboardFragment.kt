@@ -7,15 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.tenantmanagmentsystem.R
-import com.example.tenantmanagmentsystem.data.repository.TenantRepository
 import com.example.tenantmanagmentsystem.databinding.FragmentDashboardBinding
+import com.example.tenantmanagmentsystem.ui.viewmodel.TenantViewModel
 
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
+
+    private val tenantViewModel: TenantViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,22 +34,20 @@ class DashboardFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?
-    ) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         Log.d("TENANT_LIFECYCLE", "DashboardFragment: onViewCreated")
 
-        val tenantCount = TenantRepository.tenants.size
-        val totalRent = TenantRepository.totalRent()
+        tenantViewModel.tenants.observe(viewLifecycleOwner) { tenants ->
+            binding.tenantCountTextView.text =
+                "Tenants\n${tenants.size}"
+        }
 
-        binding.tenantCountTextView.text =
-            "Tenants\n$tenantCount"
-
-        binding.totalRentTextView.text =
-            "Total rent\nKSh %,.0f".format(totalRent)
+        tenantViewModel.totalRent.observe(viewLifecycleOwner) { totalRent ->
+            binding.totalRentTextView.text =
+                "Total rent\nKSh %,.0f".format(totalRent)
+        }
 
         binding.addTenantButton.setOnClickListener {
             findNavController().navigate(R.id.addTenantFragment)
