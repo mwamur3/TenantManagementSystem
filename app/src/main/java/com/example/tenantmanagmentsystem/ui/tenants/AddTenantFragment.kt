@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.tenantmanagmentsystem.data.repository.TenantRepository
+import com.example.tenantmanagmentsystem.data.model.Tenant
 import com.example.tenantmanagmentsystem.databinding.FragmentAddTenantBinding
 import com.example.tenantmanagmentsystem.ui.viewmodel.TenantViewModel
 
@@ -21,6 +22,7 @@ class AddTenantFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: TenantViewModel by activityViewModels()
+    private val tenantViewModel: TenantViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +52,9 @@ class AddTenantFragment : Fragment() {
             }
 
             TenantRepository.addTenant(tenant)
+            val tenant = Tenant(name, phone, rentText)
+
+            tenantViewModel.addTenant(tenant)
 
             Toast.makeText(requireContext(), "Tenant saved successfully", Toast.LENGTH_SHORT).show()
 

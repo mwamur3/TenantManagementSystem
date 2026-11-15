@@ -19,6 +19,7 @@ class ViewTenantsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val args: ViewTenantsFragmentArgs by navArgs()
+    private val tenantViewModel: TenantViewModel by activityViewModels()
 
     // The SHARED ViewModel: every Fragment in MainActivity gets the SAME one
     private val viewModel: TenantViewModel by activityViewModels()
@@ -68,6 +69,13 @@ class ViewTenantsFragment : Fragment() {
         // OBSERVER: runs now, and again every time allTenantsText changes
         viewModel.allTenantsText.observe(viewLifecycleOwner) { text ->
             binding.allTenantsTextView.text = text
+        tenantViewModel.tenants.observe(viewLifecycleOwner) { tenants ->
+            binding.allTenantsTextView.text =
+                if (tenants.isEmpty()) {
+                    "No tenants yet. Add one from the Dashboard."
+                } else {
+                    tenants.joinToString("\n\n") { it.summary() }
+                }
         }
     }
 

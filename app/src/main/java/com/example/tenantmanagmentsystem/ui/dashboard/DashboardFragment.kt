@@ -38,6 +38,14 @@ class DashboardFragment : Fragment() {
 
         viewModel.totalRentText.observe(viewLifecycleOwner) { rentText ->
             binding.totalRentTextView.text = rentText
+        tenantViewModel.tenants.observe(viewLifecycleOwner) { tenants ->
+            binding.tenantCountTextView.text =
+                "Tenants\n${tenants.size}"
+        }
+
+        tenantViewModel.totalRent.observe(viewLifecycleOwner) { totalRent ->
+            binding.totalRentTextView.text =
+                "Total rent\nKSh %,.0f".format(totalRent)
         }
 
         binding.addTenantButton.setOnClickListener {
