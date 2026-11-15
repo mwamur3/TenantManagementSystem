@@ -1,4 +1,3 @@
-
 package com.example.tenantmanagmentsystem.ui.dashboard
 
 import android.os.Bundle
@@ -12,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.tenantmanagmentsystem.R
 import com.example.tenantmanagmentsystem.databinding.FragmentDashboardBinding
 import com.example.tenantmanagmentsystem.ui.viewmodel.TenantViewModel
+import java.util.Locale
 
 class DashboardFragment : Fragment() {
 
@@ -25,8 +25,11 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         _binding = FragmentDashboardBinding.inflate(
-            inflater, container, false
+            inflater,
+            container,
+            false
         )
 
         Log.d("TENANT_LIFECYCLE", "DashboardFragment: onCreateView")
@@ -39,28 +42,58 @@ class DashboardFragment : Fragment() {
 
         Log.d("TENANT_LIFECYCLE", "DashboardFragment: onViewCreated")
 
+        // Observe registered tenants
         tenantViewModel.tenants.observe(viewLifecycleOwner) { tenants ->
+
             binding.tenantCountTextView.text =
                 "Tenants\n${tenants.size}"
+
+            // Calculate total monthly rent
+            val totalRent = tenants.sumOf { tenant ->
+
+                tenant.rent
+                    .replace(",", "")
+                    .trim()
+                    .toDoubleOrNull() ?: 0.0
+            }
+
+            binding.totalRentTextView.text = String.format(
+                Locale.US,
+                "Total Monthly Rent\nKSh %,.2f",
+                totalRent
+            )
         }
 
-        tenantViewModel.totalRent.observe(viewLifecycleOwner) { totalRent ->
-            binding.totalRentTextView.text =
-                "Total rent\nKSh %,.0f".format(totalRent)
-        }
-
+        // Navigate to Add Tenant
         binding.addTenantButton.setOnClickListener {
-            findNavController().navigate(R.id.addTenantFragment)
+
+            findNavController().navigate(
+                R.id.action_dashboardFragment_to_addTenantFragment
+            )
         }
 
+        // Navigate to View Tenants
         binding.viewTenantsButton.setOnClickListener {
-            findNavController().navigate(R.id.viewTenantsFragment)
+
+            findNavController().navigate(
+                R.id.action_dashboardFragment_to_viewTenantsFragment
+            )
+        }
+
+        // Navigate to Reports
+        binding.reportsButton.setOnClickListener {
+
+            findNavController().navigate(
+                R.id.action_dashboardFragment_to_reportsFragment
+            )
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         Log.d("TENANT_LIFECYCLE", "DashboardFragment: onDestroyView")
+
         _binding = null
     }
 }

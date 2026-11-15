@@ -5,6 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/dashboardFragment">
 
+    <!-- Dashboard -->
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="com.example.tenantmanagmentsystem.ui.dashboard.DashboardFragment"
@@ -26,8 +27,18 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <action
+            android:id="@+id/action_dashboardFragment_to_reportsFragment"
+            app:destination="@id/reportsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
     </fragment>
 
+    <!-- Add Tenant -->
     <fragment
         android:id="@+id/addTenantFragment"
         android:name="com.example.tenantmanagmentsystem.ui.tenants.AddTenantFragment"
@@ -39,8 +50,10 @@
             app:destination="@id/viewTenantsFragment"
             app:popUpTo="@id/dashboardFragment"
             app:popUpToInclusive="false" />
+
     </fragment>
 
+    <!-- View Tenants -->
     <fragment
         android:id="@+id/viewTenantsFragment"
         android:name="com.example.tenantmanagmentsystem.ui.tenants.ViewTenantsFragment"
@@ -52,6 +65,14 @@
             app:argType="com.example.tenantmanagmentsystem.data.model.Tenant"
             app:nullable="true"
             android:defaultValue="@null" />
+
     </fragment>
+
+    <!-- Reports -->
+    <fragment
+        android:id="@+id/reportsFragment"
+        android:name="com.example.tenantmanagmentsystem.ui.reports.ReportsFragment"
+        android:label="Reports"
+        tools:layout="@layout/fragment_reports" />
 
 </navigation>
