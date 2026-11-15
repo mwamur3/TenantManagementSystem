@@ -1,4 +1,3 @@
-
 package com.example.tenantmanagmentsystem.ui.dashboard
 
 import android.os.Bundle
@@ -9,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.tenantmanagmentsystem.R
 import com.example.tenantmanagmentsystem.databinding.FragmentDashboardBinding
 import com.example.tenantmanagmentsystem.ui.viewmodel.TenantViewModel
 
@@ -18,19 +16,14 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
-    private val tenantViewModel: TenantViewModel by activityViewModels()
+    private val viewModel: TenantViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDashboardBinding.inflate(
-            inflater, container, false
-        )
-
-        Log.d("TENANT_LIFECYCLE", "DashboardFragment: onCreateView")
-
+        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -39,6 +32,12 @@ class DashboardFragment : Fragment() {
 
         Log.d("TENANT_LIFECYCLE", "DashboardFragment: onViewCreated")
 
+        viewModel.tenantCountText.observe(viewLifecycleOwner) { countText ->
+            binding.tenantCountTextView.text = countText
+        }
+
+        viewModel.totalRentText.observe(viewLifecycleOwner) { rentText ->
+            binding.totalRentTextView.text = rentText
         tenantViewModel.tenants.observe(viewLifecycleOwner) { tenants ->
             binding.tenantCountTextView.text =
                 "Tenants\n${tenants.size}"
@@ -50,17 +49,18 @@ class DashboardFragment : Fragment() {
         }
 
         binding.addTenantButton.setOnClickListener {
-            findNavController().navigate(R.id.addTenantFragment)
+            val action = DashboardFragmentDirections.actionDashboardFragmentToAddTenantFragment()
+            findNavController().navigate(action)
         }
 
         binding.viewTenantsButton.setOnClickListener {
-            findNavController().navigate(R.id.viewTenantsFragment)
+            val action = DashboardFragmentDirections.actionDashboardFragmentToViewTenantsFragment()
+            findNavController().navigate(action)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("TENANT_LIFECYCLE", "DashboardFragment: onDestroyView")
         _binding = null
     }
 }

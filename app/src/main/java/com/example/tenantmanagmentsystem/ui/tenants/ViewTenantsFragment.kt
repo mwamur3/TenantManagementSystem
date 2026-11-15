@@ -1,4 +1,3 @@
-
 package com.example.tenantmanagmentsystem.ui.tenants
 
 import android.content.Intent
@@ -22,6 +21,9 @@ class ViewTenantsFragment : Fragment() {
     private val args: ViewTenantsFragmentArgs by navArgs()
     private val tenantViewModel: TenantViewModel by activityViewModels()
 
+    // The SHARED ViewModel: every Fragment in MainActivity gets the SAME one
+    private val viewModel: TenantViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,6 +38,7 @@ class ViewTenantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // UI JOB: show the "just added" tenant (if we arrived from Add Tenant)
         val newTenant = args.newTenant
         binding.tenant = newTenant
 
@@ -43,6 +46,7 @@ class ViewTenantsFragment : Fragment() {
             binding.newTenantGroup.visibility = View.VISIBLE
             binding.newTenantTextView.text = newTenant.summary()
 
+            // UI JOB: opening the dialer stays in the Fragment
             binding.callButton.setOnClickListener {
                 if (newTenant.phone.isNotBlank()) {
                     val intent = Intent(
@@ -62,6 +66,9 @@ class ViewTenantsFragment : Fragment() {
             binding.newTenantGroup.visibility = View.GONE
         }
 
+        // OBSERVER: runs now, and again every time allTenantsText changes
+        viewModel.allTenantsText.observe(viewLifecycleOwner) { text ->
+            binding.allTenantsTextView.text = text
         tenantViewModel.tenants.observe(viewLifecycleOwner) { tenants ->
             binding.allTenantsTextView.text =
                 if (tenants.isEmpty()) {

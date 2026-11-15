@@ -1,4 +1,3 @@
-
 package com.example.tenantmanagmentsystem.ui.tenants
 
 import android.content.Intent
@@ -12,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.example.tenantmanagmentsystem.data.repository.TenantRepository
 import com.example.tenantmanagmentsystem.data.model.Tenant
 import com.example.tenantmanagmentsystem.databinding.FragmentAddTenantBinding
 import com.example.tenantmanagmentsystem.ui.viewmodel.TenantViewModel
@@ -21,6 +21,7 @@ class AddTenantFragment : Fragment() {
     private var _binding: FragmentAddTenantBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel: TenantViewModel by activityViewModels()
     private val tenantViewModel: TenantViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -39,31 +40,26 @@ class AddTenantFragment : Fragment() {
 
         binding.saveButton.setOnClickListener {
 
-            val name = binding.tenantNameEditText.text.toString().trim()
-            val phone = binding.phoneEditText.text.toString().trim()
-            val rentText = binding.rentEditText.text.toString().trim()
+            val name = binding.tenantNameEditText.text.toString()
+            val phone = binding.phoneEditText.text.toString()
+            val rent = binding.rentEditText.text.toString()
 
-            if (name.isEmpty() || phone.isEmpty() || rentText.isEmpty()) {
+            val tenant = viewModel.addTenant(name, phone, rent)
+
+            if (tenant == null) {
                 Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val rent = rentText.toDoubleOrNull()
-
-            if (rent == null || rent <= 0) {
-                Toast.makeText(requireContext(), "Enter a valid rent amount", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
+            TenantRepository.addTenant(tenant)
             val tenant = Tenant(name, phone, rentText)
 
             tenantViewModel.addTenant(tenant)
 
             Toast.makeText(requireContext(), "Tenant saved successfully", Toast.LENGTH_SHORT).show()
 
-            val action =
-                AddTenantFragmentDirections
-                    .actionAddTenantFragmentToViewTenantsFragment(tenant)
+            val action = AddTenantFragmentDirections
+                .actionAddTenantFragmentToViewTenantsFragment(tenant)
 
             findNavController().navigate(action)
         }

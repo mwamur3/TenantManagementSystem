@@ -60,9 +60,16 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     implementation("androidx.navigation:navigation-fragment-ktx:2.9.8")
     implementation("androidx.navigation:navigation-ui-ktx:2.9.8")
+
+    // Architecture Components: ViewModel and LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    // Gives Fragments "by activityViewModels()"
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
+
     // Room: the local database library
     implementation("androidx.room:room-runtime:2.7.2")
     implementation("androidx.room:room-ktx:2.7.2")
-// Generates the Room code (ksp, not implementation)
+    // Generates the Room code (ksp, not implementation)
     ksp("androidx.room:room-compiler:2.7.2")
 }
