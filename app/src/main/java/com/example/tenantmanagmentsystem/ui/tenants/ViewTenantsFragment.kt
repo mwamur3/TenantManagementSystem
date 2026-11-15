@@ -1,4 +1,3 @@
-
 package com.example.tenantmanagmentsystem.ui.tenants
 
 import android.content.Intent
@@ -9,9 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
-import com.example.tenantmanagmentsystem.data.repository.TenantRepository
 import com.example.tenantmanagmentsystem.databinding.FragmentViewTenantsBinding
+import com.example.tenantmanagmentsystem.ui.viewmodel.TenantViewModel
 
 class ViewTenantsFragment : Fragment() {
 
@@ -19,6 +19,9 @@ class ViewTenantsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val args: ViewTenantsFragmentArgs by navArgs()
+
+    // The SHARED ViewModel: every Fragment in MainActivity gets the SAME one
+    private val viewModel: TenantViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +37,7 @@ class ViewTenantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // UI JOB: show the "just added" tenant (if we arrived from Add Tenant)
         val newTenant = args.newTenant
         binding.tenant = newTenant
 
@@ -41,6 +45,7 @@ class ViewTenantsFragment : Fragment() {
             binding.newTenantGroup.visibility = View.VISIBLE
             binding.newTenantTextView.text = newTenant.summary()
 
+            // UI JOB: opening the dialer stays in the Fragment
             binding.callButton.setOnClickListener {
                 if (newTenant.phone.isNotBlank()) {
                     val intent = Intent(
@@ -60,14 +65,10 @@ class ViewTenantsFragment : Fragment() {
             binding.newTenantGroup.visibility = View.GONE
         }
 
-        val tenants = TenantRepository.tenants
-
-        binding.allTenantsTextView.text =
-            if (tenants.isEmpty()) {
-                "No tenants yet. Add one from the Dashboard."
-            } else {
-                tenants.joinToString("\n\n") { it.summary() }
-            }
+        // OBSERVER: runs now, and again every time allTenantsText changes
+        viewModel.allTenantsText.observe(viewLifecycleOwner) { text ->
+            binding.allTenantsTextView.text = text
+        }
     }
 
     override fun onDestroyView() {
